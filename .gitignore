@@ -1,6 +1,11 @@
 # Custom
 .vscode/
-config.json
+*config.json*
+users.json
+
+# Pydest
+*.content
+*.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
