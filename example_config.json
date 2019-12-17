@@ -1,0 +1,7 @@
+{
+    "token": "bot_token",
+    "prefix": "d.",
+    "destiny": {
+        "api_key": "destiny2_api_key"
+    }
+}

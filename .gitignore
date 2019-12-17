@@ -1,6 +1,7 @@
 # Custom
 .vscode/
 *config.json*
+!example_config.json
 users.json
 
 # Pydest
