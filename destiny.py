@@ -21,48 +21,58 @@ class Destiny:
         5: "stadia"
     }
 
-    # Ghost dialog options
-    ghost_dialog = {
-        "query_success": [
-            "I found these results in the Tower database.",
-            "I queried the Tower databases and found this.",
-            "This is what I found.",
-        ],
-        "query_fail": [
-            "I couldn't find any relevant information.",
-            "I couldn't find any relevant information in the Tower databases.",
-            "My queries of the Tower databases didn't return anything useful.",
-            "I didn't find anything."
-        ],
-        "get_item_success": [
+    # Component types that may be requested
+    component_types = {
+        100: "profile",
+        101: "vendorReceipts",
+        102: "profileInventories",
+        103: "profileCurrencies",
+        104: "profileProgression",
+        105: "platformSilver",
+        200: "characters",
+        201: "characterInventories",
+        202: "characterProgressions",
+        203: "characterRenderData",
+        204: "characterActivities",
+        205: "characterEquipment",
+        300: "itemInstances",
+        301: "itemObjectives",
+        302: "itemPerks",
+        303: "itemRenderData",
+        304: "itemStats",
+        305: "itemSockets",
+        306: "itemTalenGrids",
+        307: "itemCommonData",
+        308: "itemPlugStates",
+        309: "itemPlugObjectives",
+        310: "itemReusablePlugs",
+        400: "vendor",
+        401: "vendorCategories",
+        402: "vendorSales",
+        500: "kiosks",
+        600: "currencyLookups",
+        700: "presentationNodes",
+        800: "collectibles",
+        900: "records",
+        1000: "transitory"
+    }
 
-        ],
-        "get_item_fail": [
+    class_types = {
+        0: "Titan",
+        1: "Hunter",
+        2: "Warlock"
+    }
 
-        ],
-        "get_guardian_success": [
-
-        ],
-        "get_guardian_fail": [
-
-        ],
-        "get_character_success": [
-
-        ],
-        "get_character_fail": [
-
-        ],
-        "manifest_update": [
-            "I updated my internal databases.",
-            "My internal databases have been updated.",
-            "Some new information appeared in the Tower database, I'll take note of it."
-        ]
+    race_types = {
+        0: "Human",
+        1: "Awoken",
+        2: "Exo"
     }
 
     def getGhostDialog(self, dialog_type: str):
         """Get a random ghost dialog option from dialog type"""
-        rand = random.randrange(len(Destiny.ghost_dialog[dialog_type]))
-        return "*{}*".format(Destiny.ghost_dialog[dialog_type][rand])
+        rand = random.randrange(len(self.client.ghost_dialog[dialog_type]))
+        return "*{}*".format(self.client.ghost_dialog[dialog_type][rand])
 
     ### BEGIN API CALLS ###
 
@@ -112,5 +122,12 @@ class Destiny:
     async def getProfile(self, membershipType: int, membershipID: int, components: list):
         session = self.getDestinySession()
         response = await session.api.get_profile(membershipType, membershipID, components)
+        await session.close()
+        return response["Response"]
+
+    # CHARACTERS
+    async def getCharacter(self, membershipType: int, membershipID: int, characterID: int, components: list):
+        session = self.getDestinySession()
+        response = await session.api.get_character(membershipType, membershipID, characterID, components)
         await session.close()
         return response["Response"]

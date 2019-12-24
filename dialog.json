@@ -1,0 +1,41 @@
+{
+    "loading": [
+        "Give me a moment...",
+        "This may take some time...",
+        "Hang on..."
+    ],
+    "query_success": [
+        "I found these results in the Tower database.",
+        "I queried the Tower databases and found this.",
+        "This is what I found."
+    ],
+    "query_fail": [
+        "I couldn't find any relevant information.",
+        "I couldn't find any relevant information in the Tower databases.",
+        "My queries of the Tower databases didn't return anything useful.",
+        "I didn't find anything."
+    ],
+    "get_item_success": [
+
+    ],
+    "get_item_fail": [
+
+    ],
+    "get_guardian_success": [
+
+    ],
+    "get_guardian_fail": [
+
+    ],
+    "get_character_success": [
+
+    ],
+    "get_character_fail": [
+
+    ],
+    "manifest_update": [
+        "I updated my internal databases.",
+        "My internal databases have been updated.",
+        "Some new information appeared in the Tower database, I'll take note of it."
+    ]
+}
