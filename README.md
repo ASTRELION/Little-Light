@@ -1,6 +1,6 @@
 # Little Light
 Discord bot with Destiny 2 integration.  
-Written in Python using Discord.py and [Pydest](https://github.com/jgayfer/pydest).
+Written in Python using [Discord.py](https://github.com/Rapptz/discord.py) and [Pydest](https://github.com/jgayfer/pydest).
 
 ## Inviting-the-bot-to-your-server
 
