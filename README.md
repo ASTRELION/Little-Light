@@ -2,7 +2,13 @@
 Discord bot with Destiny 2 integration.  
 Written in Python using Discord.py and [Pydest](https://github.com/jgayfer/pydest).
 
-## Installing & Running
+## Inviting-the-bot-to-your-server
+
+## Installation
+Preferably, use the offical bot and [invite it to your server](#inviting-the-bot-to-your-server).
+
+Alternatively, you may clone this repository and run the bot yourself.  
+*guide to be made*
 
 ## Configuration
 *example_config.json holds default values without key values.*
@@ -48,3 +54,5 @@ Embed color to display for failure messages.
 Time to wait in seconds for responses from certain commands. Eg. reacting to a message or sending a response message.  
 *Default: 60*  
 *Type: int*
+
+## Running
