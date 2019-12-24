@@ -4,6 +4,18 @@ Written in Python using [Discord.py](https://github.com/Rapptz/discord.py) and [
 
 ## Inviting the bot to your server
 
+## Features
+*As this bot is not completed yet, this feature list serves as a to-do list and may not be fully implemented*
+- Destiny account linking
+  - Link your Discord user with your Destiny account
+  - Update your linked Destiny account when you create new characters or play on new platforms
+- Character-specific statistics, milestones, and quests
+- View your inventory, equipped items, and currency
+- Search for any weapon or armor piece and list its stats
+- Transfer items from your Vault to your characters
+- All account information is live
+- Supports all of Destiny's applicable platforms (Xbox, Playstation, Steam, ~~Blizzard~~, and Stadia)
+
 ## Installation
 Preferably, use the offical bot and [invite it to your server](#inviting-the-bot-to-your-server).
 
