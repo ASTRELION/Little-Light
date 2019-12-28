@@ -21,6 +21,18 @@ class Destiny:
         5: "stadia"
     }
 
+    class_types = {
+        0: "Titan",
+        1: "Hunter",
+        2: "Warlock"
+    }
+
+    race_types = {
+        0: "Human",
+        1: "Awoken",
+        2: "Exo"
+    }
+
     # Component types that may be requested
     component_types = {
         100: "profile",
@@ -57,18 +69,6 @@ class Destiny:
         1000: "transitory"
     }
 
-    class_types = {
-        0: "Titan",
-        1: "Hunter",
-        2: "Warlock"
-    }
-
-    race_types = {
-        0: "Human",
-        1: "Awoken",
-        2: "Exo"
-    }
-
     def getGhostDialog(self, dialog_type: str):
         """Get a random ghost dialog option from dialog type"""
         rand = random.randrange(len(self.client.ghost_dialog[dialog_type]))
@@ -87,6 +87,7 @@ class Destiny:
 
     # HASH
     async def decodeHash(self, hashID: int, definition: str):
+        """Decodes a Destiny item hash into given definition"""
         session = self.getDestinySession()
         response = await session.decode_hash(hashID, definition)
         await session.close()
@@ -120,6 +121,7 @@ class Destiny:
         return response["Response"]
 
     async def getProfile(self, membershipType: int, membershipID: int, components: list):
+        """Get a user's profile"""
         session = self.getDestinySession()
         response = await session.api.get_profile(membershipType, membershipID, components)
         await session.close()
@@ -127,6 +129,7 @@ class Destiny:
 
     # CHARACTERS
     async def getCharacter(self, membershipType: int, membershipID: int, characterID: int, components: list):
+        """Get a specific user's character"""
         session = self.getDestinySession()
         response = await session.api.get_character(membershipType, membershipID, characterID, components)
         await session.close()

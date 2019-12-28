@@ -4,6 +4,18 @@
         "This may take some time...",
         "Hang on..."
     ],
+    "bot_missing_permissions": [
+        "Hm, I can't seem to do that.",
+        "I need higher level access for that.",
+        "I can't seem to find a way to do that.",
+        "My access levels are too low to do that."
+    ],
+    "user_missing_permissions": [
+        "You don't have high enough access level for that.",
+        "I can't let you do that.",
+        "Sorry, but I couldn't do anything.",
+        "You can't do that."
+    ],
     "query_success": [
         "I found these results in the Tower database.",
         "I queried the Tower databases and found this.",

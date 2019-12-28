@@ -23,7 +23,7 @@ Alternatively, you may clone this repository and run the bot yourself.
 *guide to be made*
 
 ## Configuration
-*example_config.json holds default values without key values.*
+### config.json
 
 > token
 
@@ -66,5 +66,7 @@ Embed color to display for failure messages.
 Time to wait in seconds for responses from certain commands. Eg. reacting to a message or sending a response message.  
 *Default: 60*  
 *Type: int*
+
+### dialog.json
 
 ## Running

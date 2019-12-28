@@ -2,7 +2,9 @@
 .vscode/
 *config.json*
 !example_config.json
-users.json
+data/guilds/*
+data/users/*
+!.gitkeep
 
 # Pydest
 *.content

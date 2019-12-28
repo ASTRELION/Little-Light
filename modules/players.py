@@ -7,15 +7,27 @@ import pydest
 import typing
 import json
 
+def setup(client):
+    client.add_cog(Player(client))
+
 class Player(commands.Cog):
-    """Destiny related commands"""
+    """Played-specific commands for general purpose use"""
 
     def __init__(self, client: LittleLightClient):
         self.client = client
         self.config = client.config
         self.destiny = client.destiny
 
+    @commands.command("update")
+    async def updateCommand(self, ctx):
+        """Update your associated Destiny account to include new characters"""
+
+    @commands.command("unlink")
+    async def unlinkCommand(self, ctx):
+        """Unlink your Discord profile from any existing Destiny accounts"""
+
     @commands.command("link")
+    @commands.bot_has_permissions(manage_roles = True, send_messages = True)
     async def linkCommand(self, ctx, membershipType: str, membershipID: int):
         """Link a membership ID with a discord user"""
         msg = await ctx.send(self.destiny.getGhostDialog("loading"))
@@ -33,8 +45,6 @@ class Player(commands.Cog):
 
         data = response[self.destiny.component_types[100]]["data"]
         userInfo = data["userInfo"]
-
-        print(json.dumps(data, indent = 4))
 
         embed.add_field(
             name = "Display Name",
@@ -99,16 +109,22 @@ class Player(commands.Cog):
         await msg.add_reaction("\u2705")
         await msg.add_reaction("\u274C")
 
-        membership = { 
+        membership = {
             membershipTypeInt: membershipID
         }
 
-        result = await util.wait_for_reaction_add(self.client, "\u2705", ctx.author)
-        await ctx.send("Reacted.")
-
-        print(characterArray)
-        print(membership)
-        self.client.write_user(ctx.author, memberships = membership, characters = characterArray)
+        result = await util.wait_for_reaction_add(self.client, reaction = ["\u2705", "\u274C"], user = ctx.author)
+        
+        if (result and str(result[0]) == "\u2705"):
+            roleID = self.client.read_guild(ctx.guild)["guardian_role_id"]
+            await ctx.author.add_roles(
+                ctx.guild.get_role(roleID),
+                reason = "Added by Little Light"
+            )
+            self.client.write_user(ctx.author, memberships = membership, characters = characterArray)
+            await ctx.send("Your account has been linked.")
+        else:
+            await ctx.send("Account linking failed.")
 
     @commands.command("search")
     async def searchCommand(self, ctx, *, player_name: str):
@@ -160,21 +176,18 @@ class Player(commands.Cog):
 
         users = self.client.read_users()
 
-        for key in users[str(user.id)]:
-            response = await self.destiny.getProfile(key, users[str(user.id)][key], [100])
+        for key in users[str(user.id)]["memberships"]:
+            response = await self.destiny.getProfile(key, users[str(user.id)]["memberships"][key], [100])
             responseString = json.dumps(response, indent = 4)
             print(responseString)
             #await ctx.send(responseString)
 
-    @commands.command("profiles")
-    async def profilesCommand(self, ctx, user: typing.Optional[discord.User] = None):
-        """Lists all profiles associated with given user"""
+    @commands.command("characters")
+    async def charactersCommand(self, ctx, user: typing.Optional[discord.User] = None):
+        """Display a summary of all of your characters"""
         if (user is None):
             user = ctx.author
 
-        users = self.client.read_users()
-        profile = json.dumps(users[str(user.id)], indent = 4)
-        await ctx.send(profile)
-
-def setup(client):
-    client.add_cog(Player(client))
+    @commands.command("inspect")
+    async def inspectCommand(self, ctx, user: discord.User):
+        """Inspect a player. View their profile and equipped items"""
