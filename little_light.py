@@ -6,28 +6,51 @@ import pydest
 import asyncio
 import json
 import sys
+import logging
 
 class LittleLightClient(commands.AutoShardedBot):
     """Little Light client"""
 
     def __init__(self):
-        # Data file paths
-        self.DATA_PATH = "data/"
-        self.GUILDS_PATH = self.DATA_PATH + "guilds/"
-        self.USERS_PATH = self.DATA_PATH + "users/"
         # Configuration files
         self.config = self.read_json_file("config.json")
         self.ghost_dialog = self.read_json_file(self.config["dialog_file"])
+        # Data file paths
+        self.DATA_PATH = self.config["data_path"]
+        self.GUILDS_PATH = self.DATA_PATH + "guilds/"
+        self.USERS_PATH = self.DATA_PATH + "users/"
 
         super().__init__(
-            command_prefix = self.config["prefix"]
+            command_prefix = self.config["command_prefix"]
         )
 
+        # Init Destiny API
         self.destiny = Destiny(self)
+
+        # Setup logging
+        self.logger = logging.getLogger("LittleLightLogger")
+        self.logger.setLevel(logging.DEBUG)
+
+        fh = logging.FileHandler("littlelight.log")
+        fh.setLevel(logging.DEBUG)
+
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.DEBUG)
+
+        formatter = logging.Formatter(
+            "%(asctime)s:%(levelname)s$ %(message)s", 
+            "%Y-%m-%d::%H:%M:%S"
+        )
+        
+        fh.setFormatter(formatter)
+        ch.setFormatter(formatter)
+        self.logger.addHandler(fh)
+        self.logger.addHandler(ch)
 
         # Load extensions
         for extension in self.config["extensions"]:
             self.load_extension(extension)
+            self.logger.debug("Loaded {} module".format(extension))
 
     # Skip built-in on_message so events.on_message gets called instead
     async def on_message(self, message): pass
@@ -40,7 +63,7 @@ class LittleLightClient(commands.AutoShardedBot):
             with open(file_name) as json_file:
                 return json.load(json_file)
         except FileNotFoundError:
-            print("File {} not found. Creating a new one...".format(file_name))
+            self.logger.warning("File {} not found. Creating a new one...".format(file_name))
             self.write_json_file(file_name, {})
             return self.read_json_file(file_name)
 
@@ -50,7 +73,7 @@ class LittleLightClient(commands.AutoShardedBot):
             with open(file_name, "w", encoding = "utf-8") as json_file:
                 json.dump(data, json_file, ensure_ascii = False, indent = 4)
         except:
-            print("File {} could not be written.".format(file_name))
+            self.logger.error("File {} could not be written!".format(file_name))
 
     def get_discord_color(self, rgb: list):
         """Return a discord.Color from an RGB list"""
@@ -60,40 +83,20 @@ class LittleLightClient(commands.AutoShardedBot):
             rgb[2]
         )
 
-    # users.json Operations #
+    # User Data Operations #
 
-    def write_user(self, user: discord.User, memberships: dict = {}, characters: dict = {}):
-        """Write user membership ID or character ID to file"""
-        data = self.read_users()
-        # Write blank user if it does not already exist
-        if (str(user.id) not in data):
-            data[str(user.id)] = {
-                "memberships": {},
-                "characters": {}
-            }
+    def write_user(self, user: discord.User, data: dict):
+        """Write user to file"""
+        data["user_id"] = user.id
+        data["user_name"] = str(user)
 
-        for m in memberships:
-            data[str(user.id)]["memberships"][str(m)] = memberships[m]
-
-        for c in characters:
-            data[str(user.id)]["characters"][str(c)] = characters[c]
-
-        self.write_json_file("users.json", data)
-
-    def write_users(self):
-        """Writes blank users.json file"""
-        self.write_json_file("users.json", {})
-
-    def read_users(self):
-        """Read entire users.json file into dictionary"""
-        return self.read_json_file("users.json")
+        self.write_json_file(self.USERS_PATH + "u{}.json".format(user.id), data)
 
     def read_user(self, user: discord.User):
-        """Get a single user's information"""
-        users = self.read_users()
-        return users[str(user.id)]
+        """Read user into dict object"""
+        return self.read_json_file(self.USERS_PATH + "u{}.json".format(user.id))
 
-    # guilds.json Operations #
+    # Guild Data Operations #
 
     async def write_guild(self, guild: discord.Guild, data: dict):
         """Write a guild to file"""
@@ -108,6 +111,7 @@ class LittleLightClient(commands.AutoShardedBot):
             for role in guild.roles:
                 if (role.name == "Guardian"):
                     guardianRole = role
+                    exit
 
             if (guardianRole is None):
                 guardianRole = await guild.create_role(

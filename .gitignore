@@ -5,6 +5,7 @@
 data/guilds/*
 data/users/*
 !.gitkeep
+.log
 
 # Pydest
 *.content

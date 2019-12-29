@@ -4,6 +4,9 @@
         "This may take some time...",
         "Hang on..."
     ],
+    "app_info": [
+        "Beginning self diagnostic..."
+    ],
     "bot_missing_permissions": [
         "Hm, I can't seem to do that.",
         "I need higher level access for that.",

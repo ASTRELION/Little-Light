@@ -5,6 +5,7 @@ import util
 import destiny
 import typing
 import json
+import datetime
 
 def setup(client):
     client.add_cog(Admin(client))
@@ -62,15 +63,53 @@ class Admin(commands.Cog):
     @commands.has_permissions(administrator = True)
     async def infoCommand(self, ctx):
         """Get information about the bot"""
+        appInfo = await self.client.application_info()
+        
+        embed = discord.Embed()
+        datetime.date.today()
+        items = {
+            "Name": appInfo.name,
+            "Description": appInfo.description,
+            "Owner": str(appInfo.owner),
+            "Created": str(self.client.user.created_at.strftime("%Y.%m.%d at %H:%M")),
+            "Age": str((datetime.date.today() - self.client.user.created_at.date()).days) + " days",
+            "Contact": "{}bugreport <message>".format(self.config["command_prefix"])
+        }
+
+        embed.add_field(
+            name = "Label",
+            value = "\n".join("**{}**".format(x) for x in items.keys())
+        )
+
+        embed.add_field(
+            name = "Value",
+            value = "\n".join(items.values())
+        )
+
+        await ctx.send(self.destiny.getGhostDialog("app_info"), embed = embed)
 
     @commands.command("bugreport")
     @commands.bot_has_permissions(send_messages = True)
     @commands.has_permissions(administrator = True)
-    async def bugreportCommand(self, ctx, report: str):
-        """Send a bug report to the bot owner. This will initiate a group DM with the owner, you, and the bot"""
+    async def bugreportCommand(self, ctx, *, report: str):
+        """Send a bug report to the bot owner"""
+        owner = (await self.client.application_info()).owner
+
+        embed = discord.Embed(
+            title = "Bug Report from {}".format(ctx.author),
+            description = report
+        )
+
+        await owner.send("", embed = embed)
 
     @commands.command("broadcast")
     @commands.bot_has_permissions(send_messages = True)
     @commands.has_permissions(administrator = True)
-    async def broadcastCommand(self, ctx, broadcast: str):
+    async def broadcastCommand(self, ctx, *, broadcast: str):
         """Broadcast a message in the default text channel to all linked Guardians"""
+
+    @commands.command("log")
+    @commands.bot_has_permissions(send_messages = True)
+    @commands.has_permissions(administrator = True)
+    async def logCommand(self, ctx):
+        """List the log of commands that have been recently executed"""

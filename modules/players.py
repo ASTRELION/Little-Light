@@ -67,12 +67,13 @@ class Player(commands.Cog):
         races = "\u200B"
         timePlayeds = "\u200B"
 
-        characterArray = {
-            str(membershipTypeInt): []
+        memberData = {
+            "memberships": [],
+            "characters": []
         }
 
         for k, v in characters.items():
-            characterArray[str(membershipTypeInt)].append(int(k))
+            memberData["characters"].append(int(k))
             classes += "{}\n".format(self.destiny.class_types[v["classType"]])
             races += "{}\n".format(self.destiny.race_types[v["raceType"]])
             timePlayeds += "{:.2f} hours\n".format(int(v["minutesPlayedTotal"]) / 60)
@@ -109,7 +110,7 @@ class Player(commands.Cog):
         await msg.add_reaction("\u2705")
         await msg.add_reaction("\u274C")
 
-        membership = {
+        memberData["memberships"] = { 
             membershipTypeInt: membershipID
         }
 
@@ -121,7 +122,7 @@ class Player(commands.Cog):
                 ctx.guild.get_role(roleID),
                 reason = "Added by Little Light"
             )
-            self.client.write_user(ctx.author, memberships = membership, characters = characterArray)
+            self.client.write_user(ctx.author, memberData)
             await ctx.send("Your account has been linked.")
         else:
             await ctx.send("Account linking failed.")
@@ -174,10 +175,8 @@ class Player(commands.Cog):
         if (user is None):
             user = ctx.author
 
-        users = self.client.read_users()
-
-        for key in users[str(user.id)]["memberships"]:
-            response = await self.destiny.getProfile(key, users[str(user.id)]["memberships"][key], [100])
+        for key in self.client.read_user(user)["memberships"]:
+            response = await self.destiny.getProfile(key, self.client.read_user(user)["memberships"][key], [100])
             responseString = json.dumps(response, indent = 4)
             print(responseString)
             #await ctx.send(responseString)

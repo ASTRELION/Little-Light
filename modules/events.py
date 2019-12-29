@@ -13,10 +13,29 @@ class Events(commands.Cog):
         self.client = client
         self.config = client.config
 
+    # Handles command inputs
+    @commands.Cog.listener()
+    async def on_message(self, message: discord.Message):
+        """Called when bot receives a message"""
+        if (message.author == self.client.user or
+                not message.content.startswith(self.config["command_prefix"])):
+            return
+
+        ctx = await self.client.get_context(message, cls = commands.Context)
+
+        if (ctx.valid):
+            await self.client.invoke(ctx)
+
+    @commands.Cog.listener()
+    async def on_command_completion(self, ctx: commands.Context):
+        """On successful command"""
+        self.client.logger.info("{} executed {}".format(ctx.author, ctx.command))
+
+    # Sets up bot on connect
     @commands.Cog.listener()
     async def on_connect(self):
         """On bot connect"""
-        print("Connected.")
+        self.client.logger.debug("Connected")
         statuses = {
             "online": discord.Status.online,
             "offline": discord.Status.offline,
@@ -43,26 +62,16 @@ class Events(commands.Cog):
             status = statuses[self.config["status"]]
         )
 
+    # Finishing setting up when bot is ready to receive commands
     @commands.Cog.listener()
     async def on_ready(self):
         """On bot ready"""
-        print("Ready.")
-        print("Loading {} guilds...".format(len(self.client.guilds)))
+        # Loads all guilds into memory
+        self.client.logger.debug("Loading {} guilds...".format(len(self.client.guilds)))
 
         for guild in self.client.guilds:
             await self.client.write_guild(guild, {})
-            print("Loaded {} guild".format(guild.name))
+            self.client.logger.debug("Loaded {} guild".format(guild.name))
 
-        print("Guilds loaded.")
-
-    @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
-        """Called when bot receives a message"""
-        if (message.author == self.client.user or
-                not message.content.startswith(self.config["prefix"])):
-            return
-
-        ctx = await self.client.get_context(message, cls = commands.Context)
-
-        if (ctx.valid):
-            await self.client.invoke(ctx)
+        self.client.logger.debug("Guilds loaded.")
+        self.client.logger.debug("Ready.")
